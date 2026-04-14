@@ -12,7 +12,7 @@ export default async function WaterBodyPage({ params }: Props) {
   const { id } = await params;
   return (
     <ProtectedShell>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen pt-12 md:pt-0">
         <Sidebar />
         <main className="flex-1 p-8 bg-gray-50">
           <Link href="/water-bodies" className="text-orange-500 hover:text-orange-600 text-sm mb-4 inline-block font-mono">

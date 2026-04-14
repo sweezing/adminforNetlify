@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Lale — Admin",
   description: "Geoportal water body management system",
+  icons: { icon: '/favicon.svg' },
 };
 
 export default function RootLayout({

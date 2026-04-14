@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
   return (
     <ProtectedShell>
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen pt-12 md:pt-0">
         <Sidebar />
         <main className="flex-1 p-8 bg-gray-50">
           <PageHeader title="Dashboard" description="System overview and key metrics" />

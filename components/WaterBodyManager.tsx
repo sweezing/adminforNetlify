@@ -12,7 +12,11 @@ export default function WaterBodyManager() {
   const [editing, setEditing] = useState<WaterBody | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  const empty = { name: '', type: '', region: '', latitude: '', longitude: '', description: '' };
+  const empty = {
+    name: '', type: '', region: '', latitude: '', longitude: '', description: '',
+    surfaceArea: '', maxDepth: '', avgDepth: '', volume: '', catchmentArea: '',
+    salinity: '', altitude: '', inflow: '', outflow: '',
+  };
   const [form, setForm] = useState(empty);
 
   async function load() {
@@ -43,6 +47,15 @@ export default function WaterBodyManager() {
       latitude: String(w.latitude ?? ''),
       longitude: String(w.longitude ?? ''),
       description: w.description ?? '',
+      surfaceArea: String(w.passport?.surfaceArea ?? ''),
+      maxDepth: String(w.passport?.maxDepth ?? ''),
+      avgDepth: String(w.passport?.avgDepth ?? ''),
+      volume: String(w.passport?.volume ?? ''),
+      catchmentArea: String(w.passport?.catchmentArea ?? ''),
+      salinity: String(w.passport?.salinity ?? ''),
+      altitude: String(w.passport?.altitude ?? ''),
+      inflow: w.passport?.inflow ?? '',
+      outflow: w.passport?.outflow ?? '',
     });
     setShowForm(true);
   }
@@ -50,6 +63,17 @@ export default function WaterBodyManager() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
+      const passport = {
+        surfaceArea: form.surfaceArea ? parseFloat(form.surfaceArea) : undefined,
+        maxDepth: form.maxDepth ? parseFloat(form.maxDepth) : undefined,
+        avgDepth: form.avgDepth ? parseFloat(form.avgDepth) : undefined,
+        volume: form.volume ? parseFloat(form.volume) : undefined,
+        catchmentArea: form.catchmentArea ? parseFloat(form.catchmentArea) : undefined,
+        salinity: form.salinity ? parseFloat(form.salinity) : undefined,
+        altitude: form.altitude ? parseFloat(form.altitude) : undefined,
+        inflow: form.inflow || undefined,
+        outflow: form.outflow || undefined,
+      };
       const payload = {
         name: form.name,
         type: form.type,
@@ -57,6 +81,7 @@ export default function WaterBodyManager() {
         latitude: form.latitude ? parseFloat(form.latitude) : undefined,
         longitude: form.longitude ? parseFloat(form.longitude) : undefined,
         description: form.description || undefined,
+        passport,
       };
       if (editing) {
         await updateWaterBody(editing.id, payload);
@@ -93,7 +118,7 @@ export default function WaterBodyManager() {
 
       {showForm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white border border-gray-200 p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-gray-200 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <h3 className="text-base font-bold text-gray-900 mb-4 pb-3 border-b border-gray-200">
               {editing ? 'Edit Water Body' : 'Create Water Body'}
             </h3>
@@ -121,6 +146,44 @@ export default function WaterBodyManager() {
                 value={form.description}
                 onChange={e => setForm({ ...form, description: e.target.value })}
               />
+
+              <div className="pt-2 pb-1 border-t border-gray-200">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Passport</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { key: 'surfaceArea', label: 'Area (km²)' },
+                  { key: 'maxDepth', label: 'Max Depth (m)' },
+                  { key: 'avgDepth', label: 'Avg Depth (m)' },
+                  { key: 'volume', label: 'Volume (km³)' },
+                  { key: 'catchmentArea', label: 'Catchment Area (km²)' },
+                  { key: 'salinity', label: 'Salinity' },
+                  { key: 'altitude', label: 'Altitude (m)' },
+                ].map(({ key, label }) => (
+                  <input
+                    key={key}
+                    type="number"
+                    step="any"
+                    className="w-full bg-white border border-gray-300 text-gray-900 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                    placeholder={label}
+                    value={(form as Record<string, string>)[key]}
+                    onChange={e => setForm({ ...form, [key]: e.target.value })}
+                  />
+                ))}
+              </div>
+              {[
+                { key: 'inflow', label: 'Inflow' },
+                { key: 'outflow', label: 'Outflow' },
+              ].map(({ key, label }) => (
+                <input
+                  key={key}
+                  className="w-full bg-white border border-gray-300 text-gray-900 px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                  placeholder={label}
+                  value={(form as Record<string, string>)[key]}
+                  onChange={e => setForm({ ...form, [key]: e.target.value })}
+                />
+              ))}
+
               <div className="flex gap-3 pt-2">
                 <button type="submit" className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 text-sm font-medium transition-colors">
                   {editing ? 'Save' : 'Create'}
